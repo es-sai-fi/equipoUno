@@ -2,7 +2,6 @@ package com.example.picobotella
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import com.example.picobotella.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -12,6 +11,6 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+    setContentView(R.layout.activity_main)
   }
 }
