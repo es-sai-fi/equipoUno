@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#4F4C4C">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:layout_gravity="top|left"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="14dp"
+            >
+
+            <ImageButton
+                android:id="@+id/btnChallengesBack"
+                android:contentDescription="@string/Back_button"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="fitCenter"
+                android:padding="0dp"
+                android:src="@drawable/back_btn" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:layout_gravity="top|center"
+            android:layout_marginTop="8dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Challenges_title"
+                android:textColor="#EB2D2D"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:contentDescription="@string/Add_one_challenge"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="40dp"
+            android:scaleType="center"
+            android:padding="0dp"
+            app:maxImageSize="35dp"
+            app:fabSize="normal"
+            app:backgroundTint="#EB2D2D"
+            app:srcCompat="@drawable/add_one_challenge"
+            app:elevation="6dp"
+            app:pressedTranslationZ="12dp">
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+
+    </FrameLayout>
+</layout>

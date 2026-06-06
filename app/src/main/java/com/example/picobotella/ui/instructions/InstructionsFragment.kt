@@ -1,0 +1,33 @@
+package com.example.picobotella.ui.instructions
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.picobotella.databinding.FragmentInstructionsBinding
+
+class InstructionsFragment: Fragment() {
+    private lateinit var binding : FragmentInstructionsBinding;
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentInstructionsBinding.inflate(inflater)
+        binding.lifecycleOwner = this
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        goBackHome()
+    }
+
+    private fun goBackHome() {
+        binding.btnInstructionsBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+}
