@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Pico Botella</string>
+    <string name="rate_app">Calificar</string>
+    <string name="audio">Audio</string>
+    <string name="instructions">Instrucciones</string>
+    <string name="challenges">Retos</string>
+    <string name="share">Compartir</string>
+    <string name="bottle">Botella</string>
+    <string name="press_me">Presióname</string>
+    <string name="splash_title">Pico Botella</string>
+    <string name="share_app_message">App Pico Botella\nSolo los valientes lo juegan !!\nhttps://play.google.com/store/apps/details?id=com.nequi.MobileApp&amp;hl=es_419&amp;gl=es</string>
+    <string name="share_app_title">Compartir aplicación</string>
+    <string name="play_store_url">https://play.google.com/store/apps/details?id=com.nequi.MobileApp&amp;hl=es_419&amp;gl=es</string>
 </resources>

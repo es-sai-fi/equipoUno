@@ -236,20 +236,14 @@ class HomeFragment : Fragment() {
     val intent =
         Intent(
             Intent.ACTION_VIEW,
-            "https://play.google.com/store/apps/details?id=com.nequi.MobileApp&hl=es_419&gl=es"
+            getString(R.string.play_store_url)
                 .toUri(),
         )
     startActivity(intent)
   }
 
   private fun shareApp() {
-    val shareText =
-        """
-        App pico botella
-        Solo los valientes lo juegan !!
-        https://play.google.com/store/apps/details?id=com.nequi.MobileApp&hl=es_419&gl=es
-        """
-            .trimIndent()
+    val shareText = getString(R.string.share_app_message)
 
     val intent =
         Intent(Intent.ACTION_SEND).apply {
@@ -257,6 +251,6 @@ class HomeFragment : Fragment() {
           type = "text/plain"
         }
 
-    startActivity(Intent.createChooser(intent, "Compartir aplicación"))
+    startActivity(Intent.createChooser(intent, getString(R.string.share_app_title)))
   }
 }

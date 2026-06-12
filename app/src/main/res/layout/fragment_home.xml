@@ -38,7 +38,7 @@
                     android:layout_height="44dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Calificar"
+                    android:contentDescription="@string/rate_app"
                     android:src="@drawable/ic_star"
                     app:tint="#FF9800"/>
 
@@ -49,7 +49,7 @@
                     android:layout_height="44dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Audio"
+                    android:contentDescription="@string/audio"
                     android:src="@drawable/ic_volume_on"
                     app:tint="#FF9800"/>
 
@@ -60,7 +60,7 @@
                     android:layout_height="44dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Instrucciones"
+                    android:contentDescription="@string/instructions"
                     android:src="@drawable/ic_instructions"
                     app:tint="#FF9800"/>
 
@@ -71,7 +71,7 @@
                     android:layout_height="44dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Retos"
+                    android:contentDescription="@string/challenges"
                     android:src="@drawable/ic_add_challenge"
                     app:tint="#FF9800"/>
 
@@ -82,7 +82,7 @@
                     android:layout_height="44dp"
                     android:layout_weight="1"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Compartir"
+                    android:contentDescription="@string/share"
                     android:src="@drawable/ic_share"
                     app:tint="#FF9800"/>
 
@@ -104,7 +104,7 @@
                 android:layout_width="220dp"
                 android:layout_height="220dp"
                 android:layout_gravity="center"
-                android:contentDescription="Botella"
+                android:contentDescription="@string/bottle"
                 android:src="@drawable/bottle_icon"/>
 
             <!-- Contador regresivo sobre la botella (HU 2.0 - Criterio 5) -->
@@ -128,7 +128,7 @@
             android:layout_height="60dp"
             android:layout_marginBottom="40dp"
             android:backgroundTint="#FF9800"
-            android:text="Presióname"
+            android:text="@string/press_me"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
