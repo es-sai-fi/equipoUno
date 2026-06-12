@@ -1,6 +1,6 @@
 package com.example.picobotella.ui.challenges
 
-import android.R
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
