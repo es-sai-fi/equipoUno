@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.picobotella.data.local.Challenge
 import com.example.picobotella.databinding.FragmentChallengesBinding
 
 class ChallengesFragment: Fragment() {
@@ -22,7 +24,21 @@ class ChallengesFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
         goBackHome()
+    }
+
+    private fun setupRecyclerView() {
+        binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
+
+        val exampleChallenges = mutableListOf<Challenge>(
+            Challenge("Realiza un RecyclerView que liste una api de Pokemones"),
+            Challenge("Completa el desafío de la botella"),
+            Challenge("Diseña la interfaz de usuario")
+        )
+
+        val adapter = RecyclerAdapter(exampleChallenges)
+        binding.recyclerview.adapter = adapter
     }
 
     private fun goBackHome() {

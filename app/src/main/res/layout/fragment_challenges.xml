@@ -1,63 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <FrameLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#4F4C4C">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:layout_gravity="top|left"
+
+        <ImageButton
+            android:id="@+id/btnChallengesBack"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_marginStart="15dp"
             android:layout_marginTop="14dp"
-            >
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back_button"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:id="@+id/btnChallengesBack"
-                android:contentDescription="@string/Back_button"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:scaleType="fitCenter"
-                android:padding="0dp"
-                android:src="@drawable/back_btn" />
-        </LinearLayout>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/titleRecycler"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="top"
-            android:layout_gravity="top|center"
             android:layout_marginTop="8dp"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Challenges_title"
-                android:textColor="#EB2D2D"
-                android:textSize="32sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+            android:text="@string/challenges_title"
+            android:textColor="#EB2D2D"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            tools:listitem="@layout/item_challenge"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/titleRecycler"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:contentDescription="@string/Add_one_challenge"
+            android:id="@+id/btnAddChallenge"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_gravity="bottom|end"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="40dp"
-            android:scaleType="center"
-            android:padding="0dp"
-            app:maxImageSize="35dp"
-            app:fabSize="normal"
+            android:contentDescription="@string/add_one_challenge"
             app:backgroundTint="#EB2D2D"
-            app:srcCompat="@drawable/add_one_challenge"
             app:elevation="6dp"
-            app:pressedTranslationZ="12dp">
-        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:maxImageSize="35dp"
+            app:srcCompat="@drawable/add_one_challenge" />
 
-
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

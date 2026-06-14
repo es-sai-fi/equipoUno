@@ -19,8 +19,12 @@
     <string name="who_wins_text">
         Gana el último jugador que no abandone el juego.
     </string>
-    <string name="Back_button">Regresar</string>
-    <string name="Instructions_title">Reglas del Juego</string>
-    <string name="Challenges_title">Retos</string>
-    <string name="Add_one_challenge">Agregar un reto</string>
+    <string name="back_button">Regresar</string>
+    <string name="instructions_title">Reglas del Juego</string>
+    <string name="challenges_title">Retos</string>
+    <string name="challenge_title">Reto</string>
+    <string name="delete_title">Eliminar Reto</string>
+    <string name="edit_title">Editar</string>
+    <string name="winner_title">Ganador</string>
+    <string name="add_one_challenge">Agregar un reto</string>
 </resources>
