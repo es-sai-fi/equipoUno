@@ -39,13 +39,22 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:padding="2dp"
+            android:id="@+id/ivImagenApi"
+            app:layout_constraintBottom_toTopOf="@+id/cl_contenedor"
+            app:layout_constraintEnd_toEndOf="@+id/cl_contenedor"
+            app:layout_constraintStart_toStartOf="@+id/cl_contenedor"
+            app:layout_constraintTop_toTopOf="@+id/cl_contenedor"/>
 
         <Button
             android:id="@+id/cancelBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#FF2400"
-            android:text="Cerrar"
+            android:text="@string/custom_dialogue_button"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="22sp"

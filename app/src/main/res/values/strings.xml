@@ -27,4 +27,5 @@
     <string name="edit_title">Editar</string>
     <string name="winner_title">Ganador</string>
     <string name="add_one_challenge">Agregar un reto</string>
+    <string name="custom_dialogue_button">Cerrar</string>
 </resources>
