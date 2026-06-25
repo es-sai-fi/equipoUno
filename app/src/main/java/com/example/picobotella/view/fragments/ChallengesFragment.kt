@@ -33,9 +33,15 @@ class ChallengesFragment: Fragment() {
         binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
 
         val exampleChallenges = mutableListOf<Challenge>(
-            Challenge("Realiza un RecyclerView que liste una api de Pokemones"),
-            Challenge("Completa el desafío de la botella"),
-            Challenge("Diseña la interfaz de usuario")
+            Challenge(
+                descripcion = "Realiza un RecyclerView que liste una api de Pokemones"
+            ),
+            Challenge(
+                descripcion = "Completa el desafío de la botella"
+            ),
+            Challenge(
+                descripcion = "Diseña la interfaz de usuario"
+            )
         )
 
         val adapter = RecyclerAdapter(exampleChallenges)
