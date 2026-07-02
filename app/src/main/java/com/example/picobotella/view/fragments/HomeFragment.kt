@@ -19,7 +19,8 @@ import com.example.picobotella.databinding.FragmentHomeBinding
 import kotlin.random.Random
 
 class HomeFragment : Fragment() {
-  private lateinit var binding: FragmentHomeBinding
+  private var _binding: FragmentHomeBinding? = null
+  private val binding get() = _binding!!
 
   private var backgroundPlayer: MediaPlayer? = null
   private var spinPlayer: MediaPlayer? = null
@@ -28,12 +29,18 @@ class HomeFragment : Fragment() {
   private var isAudioOn: Boolean = true
   private var bottleRotation: Float = 0f
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    isAudioOn = savedInstanceState?.getBoolean(STATE_AUDIO_ON) ?: isAudioOn
+    bottleRotation = savedInstanceState?.getFloat(STATE_BOTTLE_ROTATION) ?: bottleRotation
+  }
+
   override fun onCreateView(
       inflater: LayoutInflater,
       container: ViewGroup?,
       savedInstanceState: Bundle?,
   ): View {
-    binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+    _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
 
     return binding.root
   }
@@ -49,15 +56,23 @@ class HomeFragment : Fragment() {
   }
 
   override fun onDestroyView() {
-    super.onDestroyView()
-
     countdownTimer?.cancel()
+    countdownTimer = null
 
     backgroundPlayer?.release()
     backgroundPlayer = null
 
     spinPlayer?.release()
     spinPlayer = null
+
+    _binding = null
+    super.onDestroyView()
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    outState.putBoolean(STATE_AUDIO_ON, isAudioOn)
+    outState.putFloat(STATE_BOTTLE_ROTATION, bottleRotation)
+    super.onSaveInstanceState(outState)
   }
 
   private fun setupBackPress() {
@@ -76,8 +91,12 @@ class HomeFragment : Fragment() {
   private fun setupAudio() {
     backgroundPlayer = MediaPlayer.create(requireContext(), R.raw.background_music)
     backgroundPlayer?.isLooping = true
-    backgroundPlayer?.start()
-    isAudioOn = true
+    binding.btnAudio.setImageResource(
+        if (isAudioOn) R.drawable.ic_volume_on else R.drawable.ic_volume_off,
+    )
+    if (isAudioOn) {
+      backgroundPlayer?.start()
+    }
   }
 
   private fun setupToolbar() {
@@ -252,5 +271,10 @@ class HomeFragment : Fragment() {
         }
 
     startActivity(Intent.createChooser(intent, getString(R.string.share_app_title)))
+  }
+
+  companion object {
+    private const val STATE_AUDIO_ON = "state_audio_on"
+    private const val STATE_BOTTLE_ROTATION = "state_bottle_rotation"
   }
 }
