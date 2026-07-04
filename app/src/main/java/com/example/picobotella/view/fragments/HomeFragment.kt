@@ -37,7 +37,8 @@ class HomeFragment : Fragment() {
       container: ViewGroup?,
       savedInstanceState: Bundle?,
   ): View {
-    binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+    binding = FragmentHomeBinding.inflate(inflater)
+    binding.lifecycleOwner = this
     return binding.root
   }
 
