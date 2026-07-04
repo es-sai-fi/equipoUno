@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:background="@drawable/wood_floor_background">
 
-        <!-- Toolbar personalizada (HU 3.0 - fondo negro, bordes redondeados) -->
         <androidx.cardview.widget.CardView
             android:id="@+id/toolbarCard"
             android:layout_width="0dp"
@@ -31,7 +30,6 @@
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="10dp">
 
-                <!-- Estrella: calificar app (HU 4.0) -->
                 <ImageButton
                     android:id="@+id/btnRate"
                     android:layout_width="0dp"
@@ -42,7 +40,6 @@
                     android:src="@drawable/ic_star"
                     app:tint="#FF9800"/>
 
-                <!-- Audio on/off -->
                 <ImageButton
                     android:id="@+id/btnAudio"
                     android:layout_width="0dp"
@@ -53,7 +50,6 @@
                     android:src="@drawable/ic_volume_on"
                     app:tint="#FF9800"/>
 
-                <!-- Instrucciones (HU 5.0) -->
                 <ImageButton
                     android:id="@+id/btnInstructions"
                     android:layout_width="0dp"
@@ -64,7 +60,6 @@
                     android:src="@drawable/ic_instructions"
                     app:tint="#FF9800"/>
 
-                <!-- Agregar retos (HU 6.0) -->
                 <ImageButton
                     android:id="@+id/btnChallenges"
                     android:layout_width="0dp"
@@ -75,7 +70,6 @@
                     android:src="@drawable/ic_add_challenge"
                     app:tint="#FF9800"/>
 
-                <!-- Compartir (HU 10) -->
                 <ImageButton
                     android:id="@+id/btnShare"
                     android:layout_width="0dp"
@@ -89,7 +83,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Botella en el centro (HU 2.0 - Criterio 4) -->
         <FrameLayout
             android:id="@+id/bottleContainer"
             android:layout_width="0dp"
@@ -107,7 +100,6 @@
                 android:contentDescription="@string/bottle"
                 android:src="@drawable/bottle_icon"/>
 
-            <!-- Contador regresivo sobre la botella (HU 2.0 - Criterio 5) -->
             <TextView
                 android:id="@+id/tvCountdown"
                 android:layout_width="wrap_content"
@@ -121,7 +113,6 @@
 
         </FrameLayout>
 
-        <!-- Botón parpadeante "Presióname" (HU 2.0 - Criterio 6) -->
         <Button
             android:id="@+id/btnPresioname"
             android:layout_width="180dp"
