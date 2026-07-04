@@ -8,26 +8,27 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.picobotella.databinding.FragmentInstructionsBinding
 
-class InstructionsFragment: Fragment() {
-    private lateinit var binding : FragmentInstructionsBinding;
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentInstructionsBinding.inflate(inflater)
-        binding.lifecycleOwner = this
-        return binding.root
-    }
+class InstructionsFragment : Fragment() {
+  private lateinit var binding: FragmentInstructionsBinding
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        goBackHome()
-    }
+  override fun onCreateView(
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?,
+  ): View {
+    binding = FragmentInstructionsBinding.inflate(inflater)
+    binding.lifecycleOwner = this
+    return binding.root
+  }
 
-    private fun goBackHome() {
-        binding.btnInstructionsBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    goBackHome()
+  }
+
+  private fun goBackHome() {
+    binding.btnInstructionsBack.setOnClickListener {
+      findNavController().navigateUp()
     }
+  }
 }

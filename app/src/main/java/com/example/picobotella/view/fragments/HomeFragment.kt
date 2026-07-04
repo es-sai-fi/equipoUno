@@ -30,7 +30,7 @@ class HomeFragment : Fragment() {
   private var isAudioOn: Boolean = true
   private var bottleRotation: Float = 0f
 
-    override fun onCreateView(
+  override fun onCreateView(
       inflater: LayoutInflater,
       container: ViewGroup?,
       savedInstanceState: Bundle?,
@@ -84,30 +84,35 @@ class HomeFragment : Fragment() {
 
   private fun setupToolbar() {
     binding.btnRate.setOnClickListener {
-      animateButton(it){
-      rateApp()}
+      animateButton(it) {
+        rateApp()
+      }
     }
 
     binding.btnShare.setOnClickListener {
-      animateButton(it){
-      shareApp()}
+      animateButton(it) {
+        shareApp()
+      }
     }
 
     binding.btnAudio.setOnClickListener {
       animateButton(it) {
-      toggleAudio()}
+        toggleAudio()
+      }
     }
 
     binding.btnInstructions.setOnClickListener {
       animateButton(it) {
-      pauseAudioIfNeeded()
-      findNavController().navigate(R.id.action_homeFragment_to_instructionsFragment)}
+        pauseAudioIfNeeded()
+        findNavController().navigate(R.id.action_homeFragment_to_instructionsFragment)
+      }
     }
 
     binding.btnChallenges.setOnClickListener {
       animateButton(it) {
-      pauseAudioIfNeeded()
-      findNavController().navigate(R.id.action_homeFragment_to_challengesFragment) }
+        pauseAudioIfNeeded()
+        findNavController().navigate(R.id.action_homeFragment_to_challengesFragment)
+      }
     }
   }
 
@@ -115,23 +120,19 @@ class HomeFragment : Fragment() {
     binding.btnPresioname.setOnClickListener { spinBottle() }
   }
 
-    private fun animateButton(view: View, onEnd: () -> Unit) {
-        view.animate().cancel()
+  private fun animateButton(view: View, onEnd: () -> Unit) {
+    view.animate().cancel()
 
-        view.animate()
-            .scaleX(0.85f)
-            .scaleY(0.85f)
-            .setDuration(80)
-            .withEndAction {
-                view.animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(80)
-                    .withEndAction(onEnd)
-                    .start()
-            }
-            .start()
-    }
+    view
+        .animate()
+        .scaleX(0.85f)
+        .scaleY(0.85f)
+        .setDuration(80)
+        .withEndAction {
+          view.animate().scaleX(1f).scaleY(1f).setDuration(80).withEndAction(onEnd).start()
+        }
+        .start()
+  }
 
   private fun startBlinkAnimation() {
     val blink =
@@ -143,32 +144,32 @@ class HomeFragment : Fragment() {
     binding.btnPresioname.startAnimation(blink)
   }
 
-    private fun spinBottle() {
-        binding.btnPresioname.clearAnimation()
-        binding.btnPresioname.visibility = View.INVISIBLE
+  private fun spinBottle() {
+    binding.btnPresioname.clearAnimation()
+    binding.btnPresioname.visibility = View.INVISIBLE
 
-        pauseAudioIfNeeded()
-        playSpinSound()
+    pauseAudioIfNeeded()
+    playSpinSound()
 
-        val targetRotation = nextBottleRotation()
+    val targetRotation = nextBottleRotation()
 
-        startCountdown()
+    startCountdown()
 
-        binding.bottleImage
-            .animate()
-            .rotation(targetRotation)
-            .setDuration(SPIN_DURATION)
-            .withEndAction {
-                saveBottleRotation(targetRotation)
-                binding.tvCountdown.visibility = View.GONE
-                binding.btnPresioname.visibility = View.VISIBLE
-                startBlinkAnimation()
+    binding.bottleImage
+        .animate()
+        .rotation(targetRotation)
+        .setDuration(SPIN_DURATION)
+        .withEndAction {
+          saveBottleRotation(targetRotation)
+          binding.tvCountdown.visibility = View.GONE
+          binding.btnPresioname.visibility = View.VISIBLE
+          startBlinkAnimation()
 
-                resetSpinSound()
-                resumeAudioIfNeeded()
-            }
-            .start()
-    }
+          resetSpinSound()
+          resumeAudioIfNeeded()
+        }
+        .start()
+  }
 
   private fun nextBottleRotation(): Float {
     val randomExtra = Random.nextInt(0, 361)
@@ -184,25 +185,26 @@ class HomeFragment : Fragment() {
     bottleRotation = rotation
   }
 
-    private fun startCountdown() {
-        binding.tvCountdown.visibility = View.VISIBLE
-        binding.tvCountdown.text = "3"
+  private fun startCountdown() {
+    binding.tvCountdown.visibility = View.VISIBLE
+    binding.tvCountdown.text = "3"
 
-        countdownTimer?.cancel()
+    countdownTimer?.cancel()
 
-        countdownTimer = object : CountDownTimer(SPIN_DURATION, 1000) {
+    countdownTimer =
+        object : CountDownTimer(SPIN_DURATION, 1000) {
 
-            override fun onTick(millisUntilFinished: Long) {
+              override fun onTick(millisUntilFinished: Long) {
                 val seconds = kotlin.math.ceil(millisUntilFinished / 1000.0).toInt()
                 binding.tvCountdown.text = seconds.toString()
-            }
+              }
 
-            override fun onFinish() {
+              override fun onFinish() {
                 binding.tvCountdown.text = "0"
+              }
             }
-
-        }.start()
-    }
+            .start()
+  }
 
   private fun toggleAudio() {
     isAudioOn = !isAudioOn
@@ -243,8 +245,7 @@ class HomeFragment : Fragment() {
     val intent =
         Intent(
             Intent.ACTION_VIEW,
-            getString(R.string.play_store_url)
-                .toUri(),
+            getString(R.string.play_store_url).toUri(),
         )
     startActivity(intent)
   }
