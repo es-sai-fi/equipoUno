@@ -39,10 +39,6 @@ android {
   }
 }
 
-kotlin {
-  jvmToolchain(21)
-}
-
 dependencies {
 
   implementation(libs.androidx.appcompat)
@@ -52,26 +48,26 @@ dependencies {
   implementation(libs.androidx.navigation.fragment.ktx)
   implementation(libs.androidx.navigation.ui.ktx)
 
-  implementation("androidx.activity:activity-ktx:1.10.1")
-  implementation("androidx.navigation:navigation-common-ktx:2.9.3")
-  implementation("androidx.recyclerview:recyclerview:1.4.0")
-  implementation("androidx.cardview:cardview:1.0.0")
+  implementation(libs.androidx.activity.ktx)
+  implementation(libs.androidx.navigation.common.ktx)
+  implementation(libs.androidx.recyclerview)
+  implementation(libs.androidx.cardview)
 
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+  implementation(libs.kotlinx.coroutines.core)
+  implementation(libs.kotlinx.coroutines.android)
 
-  implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.2")
-  implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.2")
-  implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.2")
+  implementation(libs.androidx.lifecycle.viewmodel.ktx)
+  implementation(libs.androidx.lifecycle.livedata.ktx)
+  implementation(libs.androidx.lifecycle.runtime.ktx)
 
-  implementation("androidx.room:room-runtime:2.7.2")
-  implementation("androidx.room:room-ktx:2.7.2")
-  ksp("androidx.room:room-compiler:2.7.2")
+  implementation(libs.androidx.room.runtime)
+  implementation(libs.androidx.room.ktx)
+  ksp(libs.androidx.room.compiler)
 
-  implementation("com.squareup.retrofit2:retrofit:2.11.0")
-  implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+  implementation(libs.retrofit)
+  implementation(libs.converter.gson)
 
-  implementation("com.github.bumptech.glide:glide:4.16.0")
+  implementation(libs.glide)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
