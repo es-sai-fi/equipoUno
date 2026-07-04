@@ -30,7 +30,7 @@ class HomeFragment : Fragment() {
   private var isAudioOn: Boolean = true
   private var bottleRotation: Float = 0f
 
-  override fun onCreateView(
+    override fun onCreateView(
       inflater: LayoutInflater,
       container: ViewGroup?,
       savedInstanceState: Bundle?,
@@ -84,30 +84,30 @@ class HomeFragment : Fragment() {
 
   private fun setupToolbar() {
     binding.btnRate.setOnClickListener {
-      animateButton(it)
-      rateApp()
+      animateButton(it){
+      rateApp()}
     }
 
     binding.btnShare.setOnClickListener {
-      animateButton(it)
-      shareApp()
+      animateButton(it){
+      shareApp()}
     }
 
     binding.btnAudio.setOnClickListener {
-      animateButton(it)
-      toggleAudio()
+      animateButton(it) {
+      toggleAudio()}
     }
 
     binding.btnInstructions.setOnClickListener {
-      animateButton(it)
+      animateButton(it) {
       pauseAudioIfNeeded()
-      findNavController().navigate(R.id.action_homeFragment_to_instructionsFragment)
+      findNavController().navigate(R.id.action_homeFragment_to_instructionsFragment)}
     }
 
     binding.btnChallenges.setOnClickListener {
-      animateButton(it)
+      animateButton(it) {
       pauseAudioIfNeeded()
-      findNavController().navigate(R.id.action_homeFragment_to_challengesFragment)
+      findNavController().navigate(R.id.action_homeFragment_to_challengesFragment) }
     }
   }
 
@@ -115,18 +115,23 @@ class HomeFragment : Fragment() {
     binding.btnPresioname.setOnClickListener { spinBottle() }
   }
 
-  private fun animateButton(view: View) {
-    view
-        .animate()
-        .scaleX(0.75f)
-        .scaleY(0.75f)
-        .rotation(-2f)
-        .setDuration(120)
-        .withEndAction {
-          view.animate().scaleX(1f).scaleY(1f).rotation(0f).setDuration(120).start()
-        }
-        .start()
-  }
+    private fun animateButton(view: View, onEnd: () -> Unit) {
+        view.animate().cancel()
+
+        view.animate()
+            .scaleX(0.85f)
+            .scaleY(0.85f)
+            .setDuration(80)
+            .withEndAction {
+                view.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(80)
+                    .withEndAction(onEnd)
+                    .start()
+            }
+            .start()
+    }
 
   private fun startBlinkAnimation() {
     val blink =
