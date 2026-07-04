@@ -191,12 +191,13 @@ class HomeFragment : Fragment() {
 
   private fun toggleAudio() {
     isAudioEnabled = !isAudioEnabled
+
     if (!isAudioEnabled) {
       backgroundPlayer?.pause()
       stopSpinSound()
-      return
+    } else {
+      if (!isSpinning) backgroundPlayer?.start()
     }
-    if (!isSpinning) backgroundPlayer?.start()
 
     binding.btnAudio.setImageResource(
         if (isAudioEnabled) R.drawable.ic_volume_on else R.drawable.ic_volume_off
