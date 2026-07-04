@@ -11,7 +11,6 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.picobotella.R
@@ -129,8 +128,19 @@ class HomeFragment : Fragment() {
   private fun spinBottle() {
     startSpinState()
     val targetRotation = nextBottleRotation()
-    startCountdown()
+    startCountdown {
+      showChallengeDialog()
+    }
     playSpinAnimation(targetRotation)
+  }
+
+  private fun showChallengeDialog() {
+    pauseAudioForChallenge()
+  }
+
+  private fun pauseAudioForChallenge() {
+    backgroundPlayer?.pause()
+    stopSpinSound()
   }
 
   private fun startSpinState() {
@@ -152,11 +162,16 @@ class HomeFragment : Fragment() {
 
   private fun finishSpin(targetRotation: Float) {
     saveBottleRotation(targetRotation)
+
     binding.tvCountdown.visibility = View.GONE
     binding.btnPresioname.visibility = View.VISIBLE
+
     startBlinkAnimation()
+
     isSpinning = false
+    
     stopSpinSound()
+
     if (isAudioEnabled) backgroundPlayer?.start()
   }
 
@@ -170,24 +185,30 @@ class HomeFragment : Fragment() {
     bottleRotation = rotation
   }
 
-  private fun startCountdown() {
+  private fun startCountdown(onComplete: () -> Unit) {
+
     binding.tvCountdown.visibility = View.VISIBLE
     binding.tvCountdown.text = "3"
 
     countdownTimer?.cancel()
 
     countdownTimer =
-        object : CountDownTimer(SPIN_DURATION, 1000) {
-              override fun onTick(millisUntilFinished: Long) {
-                val seconds = kotlin.math.ceil(millisUntilFinished / 1000.0).toInt()
-                binding.tvCountdown.text = seconds.toString()
-              }
+      object : CountDownTimer(SPIN_DURATION, 1000) {
 
-              override fun onFinish() {
-                binding.tvCountdown.text = "0"
-              }
-            }
-            .start()
+        private var value = 3
+
+        override fun onTick(millisUntilFinished: Long) {
+          if (value >= 0) {
+            binding.tvCountdown.text = value.toString()
+            value--
+          }
+        }
+
+        override fun onFinish() {
+          binding.tvCountdown.text = "0"
+          onComplete()
+        }
+      }.start()
   }
 
   private fun toggleAudio() {
@@ -215,9 +236,12 @@ class HomeFragment : Fragment() {
   }
 
   private fun stopSpinSound() {
-    spinPlayer?.stop()
-    spinPlayer?.release()
-    spinPlayer = null
+    spinPlayer?.apply {
+      if (isPlaying) {
+        pause()
+        seekTo(0)
+      }
+    }
   }
 
   private fun rateApp() {
@@ -241,8 +265,13 @@ class HomeFragment : Fragment() {
 
   private fun cleanup() {
     countdownTimer?.cancel()
+    countdownTimer = null
+
+    backgroundPlayer?.stop()
     backgroundPlayer?.release()
     backgroundPlayer = null
+
+    spinPlayer?.stop()
     spinPlayer?.release()
     spinPlayer = null
   }
