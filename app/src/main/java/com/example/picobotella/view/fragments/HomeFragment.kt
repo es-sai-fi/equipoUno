@@ -18,6 +18,8 @@ import com.example.picobotella.R
 import com.example.picobotella.databinding.FragmentHomeBinding
 import kotlin.random.Random
 
+private const val SPIN_DURATION = 3000L
+
 class HomeFragment : Fragment() {
   private lateinit var binding: FragmentHomeBinding
 
@@ -136,33 +138,32 @@ class HomeFragment : Fragment() {
     binding.btnPresioname.startAnimation(blink)
   }
 
-  private fun spinBottle() {
-    binding.btnPresioname.clearAnimation()
-    binding.btnPresioname.visibility = View.INVISIBLE
+    private fun spinBottle() {
+        binding.btnPresioname.clearAnimation()
+        binding.btnPresioname.visibility = View.INVISIBLE
 
-    pauseAudioIfNeeded()
-    playSpinSound()
+        pauseAudioIfNeeded()
+        playSpinSound()
 
-    val targetRotation = nextBottleRotation()
-    val duration = nextSpinDuration()
+        val targetRotation = nextBottleRotation()
 
-    startCountdown(duration)
+        startCountdown()
 
-    binding.bottleImage
-        .animate()
-        .rotation(targetRotation)
-        .setDuration(duration)
-        .withEndAction {
-          saveBottleRotation(targetRotation)
-          binding.tvCountdown.visibility = View.GONE
-          binding.btnPresioname.visibility = View.VISIBLE
-          startBlinkAnimation()
+        binding.bottleImage
+            .animate()
+            .rotation(targetRotation)
+            .setDuration(SPIN_DURATION)
+            .withEndAction {
+                saveBottleRotation(targetRotation)
+                binding.tvCountdown.visibility = View.GONE
+                binding.btnPresioname.visibility = View.VISIBLE
+                startBlinkAnimation()
 
-          resetSpinSound()
-          resumeAudioIfNeeded()
-        }
-        .start()
-  }
+                resetSpinSound()
+                resumeAudioIfNeeded()
+            }
+            .start()
+    }
 
   private fun nextBottleRotation(): Float {
     val randomExtra = Random.nextInt(0, 361)
@@ -178,24 +179,25 @@ class HomeFragment : Fragment() {
     bottleRotation = rotation
   }
 
-  private fun startCountdown(duration: Long) {
-    binding.tvCountdown.visibility = View.VISIBLE
+    private fun startCountdown() {
+        binding.tvCountdown.visibility = View.VISIBLE
+        binding.tvCountdown.text = "3"
 
-    val totalSeconds = (duration / 1000).toInt()
-    var count = totalSeconds
+        countdownTimer?.cancel()
 
-    countdownTimer =
-        object : CountDownTimer(duration, 1000) {
-              override fun onTick(millisUntilFinished: Long) {
-                binding.tvCountdown.text = (millisUntilFinished / 1000).toString()
-              }
+        countdownTimer = object : CountDownTimer(SPIN_DURATION, 1000) {
 
-              override fun onFinish() {
-                binding.tvCountdown.text = "0"
-              }
+            override fun onTick(millisUntilFinished: Long) {
+                val seconds = kotlin.math.ceil(millisUntilFinished / 1000.0).toInt()
+                binding.tvCountdown.text = seconds.toString()
             }
-            .start()
-  }
+
+            override fun onFinish() {
+                binding.tvCountdown.text = "0"
+            }
+
+        }.start()
+    }
 
   private fun toggleAudio() {
     isAudioOn = !isAudioOn
