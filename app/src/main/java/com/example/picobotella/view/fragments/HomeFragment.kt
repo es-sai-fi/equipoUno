@@ -169,7 +169,7 @@ class HomeFragment : Fragment() {
     startBlinkAnimation()
 
     isSpinning = false
-    
+
     stopSpinSound()
 
     if (isAudioEnabled) backgroundPlayer?.start()
@@ -193,22 +193,23 @@ class HomeFragment : Fragment() {
     countdownTimer?.cancel()
 
     countdownTimer =
-      object : CountDownTimer(SPIN_DURATION, 1000) {
+        object : CountDownTimer(SPIN_DURATION, 1000) {
 
-        private var value = 3
+              private var value = 3
 
-        override fun onTick(millisUntilFinished: Long) {
-          if (value >= 0) {
-            binding.tvCountdown.text = value.toString()
-            value--
-          }
-        }
+              override fun onTick(millisUntilFinished: Long) {
+                if (value >= 0) {
+                  binding.tvCountdown.text = value.toString()
+                  value--
+                }
+              }
 
-        override fun onFinish() {
-          binding.tvCountdown.text = "0"
-          onComplete()
-        }
-      }.start()
+              override fun onFinish() {
+                binding.tvCountdown.text = "0"
+                onComplete()
+              }
+            }
+            .start()
   }
 
   private fun toggleAudio() {
