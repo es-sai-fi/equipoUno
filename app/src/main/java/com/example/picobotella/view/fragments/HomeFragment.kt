@@ -20,7 +20,7 @@ import kotlin.random.Random
 private const val SPIN_DURATION = 3000L
 
 class HomeFragment : Fragment() {
-
+  
   private lateinit var binding: FragmentHomeBinding
 
   private var isAudioEnabled = true
