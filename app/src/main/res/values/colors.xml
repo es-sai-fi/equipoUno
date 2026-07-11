@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="challenge_orange">#FF9800</color>
+    <color name="challenge_screen_background">#4F4C4C</color>
+    <color name="challenge_divider">#33000000</color>
+    <color name="challenge_hint">#757575</color>
+    <color name="challenge_button_disabled">#BDBDBD</color>
 </resources>
