@@ -10,21 +10,23 @@ import com.example.picobotella.utils.Constants.NAME_BD
 @Database(
     entities = [Challenge::class],
     version = 1,
+    exportSchema = false,
 )
 abstract class ChallengeDB : RoomDatabase() {
+    abstract fun challengeDao(): ChallengeDao
 
-  abstract fun challengeDao(): ChallengeDao
+    companion object {
+        @Volatile
+        private var instance: ChallengeDB? = null
 
-  companion object {
-
-    fun getDatabase(context: Context): ChallengeDB {
-
-      return Room.databaseBuilder(
-              context.applicationContext,
-              ChallengeDB::class.java,
-              NAME_BD,
-          )
-          .build()
+        fun getDatabase(context: Context): ChallengeDB {
+            return instance ?: synchronized(this) {
+                instance ?: Room.databaseBuilder(
+                    context.applicationContext,
+                    ChallengeDB::class.java,
+                    NAME_BD,
+                ).build().also { instance = it }
+            }
+        }
     }
-  }
 }
