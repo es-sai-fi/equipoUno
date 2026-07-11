@@ -11,68 +11,68 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import androidx.activity.OnBackPressedCallback
 import androidx.core.net.toUri
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.picobotella.R
 import com.example.picobotella.databinding.FragmentHomeBinding
 import kotlin.random.Random
 
+private const val SPIN_DURATION = 3000L
+
 class HomeFragment : Fragment() {
-  private var _binding: FragmentHomeBinding? = null
-  private val binding get() = _binding!!
+  
+  private lateinit var binding: FragmentHomeBinding
+
+  private var isAudioEnabled = true
+  private var isSpinning = false
+  private var bottleRotation: Float = 0f
 
   private var backgroundPlayer: MediaPlayer? = null
   private var spinPlayer: MediaPlayer? = null
   private var countdownTimer: CountDownTimer? = null
-
-  private var isAudioOn: Boolean = true
-  private var bottleRotation: Float = 0f
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    isAudioOn = savedInstanceState?.getBoolean(STATE_AUDIO_ON) ?: isAudioOn
-    bottleRotation = savedInstanceState?.getFloat(STATE_BOTTLE_ROTATION) ?: bottleRotation
-  }
 
   override fun onCreateView(
       inflater: LayoutInflater,
       container: ViewGroup?,
       savedInstanceState: Bundle?,
   ): View {
-    _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
-
+    binding = FragmentHomeBinding.inflate(inflater)
+    binding.lifecycleOwner = this
     return binding.root
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-
     setupBackPress()
     setupAudio()
-    setupToolbar()
-    setupBottleButton()
+    setupUI()
+    setupBottle()
     startBlinkAnimation()
   }
 
   override fun onDestroyView() {
-    countdownTimer?.cancel()
-    countdownTimer = null
-
-    backgroundPlayer?.release()
-    backgroundPlayer = null
-
-    spinPlayer?.release()
-    spinPlayer = null
-
-    _binding = null
     super.onDestroyView()
+    cleanup()
   }
 
-  override fun onSaveInstanceState(outState: Bundle) {
-    outState.putBoolean(STATE_AUDIO_ON, isAudioOn)
-    outState.putFloat(STATE_BOTTLE_ROTATION, bottleRotation)
-    super.onSaveInstanceState(outState)
+  private fun setupUI() {
+    setupToolbar()
+  }
+
+  private fun setupBottle() {
+    binding.btnPresioname.setOnClickListener { spinBottle() }
+  }
+
+  private fun setupToolbar() {
+    binding.btnRate.setOnClickListener { animateButton(it) { rateApp() } }
+    binding.btnShare.setOnClickListener { animateButton(it) { shareApp() } }
+    binding.btnAudio.setOnClickListener { animateButton(it) { toggleAudio() } }
+    binding.btnInstructions.setOnClickListener {
+      animateButton(it) { navigateSafely(R.id.action_homeFragment_to_instructionsFragment) }
+    }
+    binding.btnChallenges.setOnClickListener {
+      animateButton(it) { navigateSafely(R.id.action_homeFragment_to_challengesFragment) }
+    }
   }
 
   private fun setupBackPress() {
@@ -89,58 +89,28 @@ class HomeFragment : Fragment() {
   }
 
   private fun setupAudio() {
-    backgroundPlayer = MediaPlayer.create(requireContext(), R.raw.background_music)
-    backgroundPlayer?.isLooping = true
-    binding.btnAudio.setImageResource(
-        if (isAudioOn) R.drawable.ic_volume_on else R.drawable.ic_volume_off,
-    )
-    if (isAudioOn) {
-      backgroundPlayer?.start()
-    }
+    backgroundPlayer =
+        MediaPlayer.create(requireContext(), R.raw.background_music).apply {
+          isLooping = true
+        }
+
+    if (isAudioEnabled) backgroundPlayer?.start()
   }
 
-  private fun setupToolbar() {
-    binding.btnRate.setOnClickListener {
-      animateButton(it)
-      rateApp()
-    }
-
-    binding.btnShare.setOnClickListener {
-      animateButton(it)
-      shareApp()
-    }
-
-    binding.btnAudio.setOnClickListener {
-      animateButton(it)
-      toggleAudio()
-    }
-
-    binding.btnInstructions.setOnClickListener {
-      animateButton(it)
-      pauseAudioIfNeeded()
-      findNavController().navigate(R.id.action_homeFragment_to_instructionsFragment)
-    }
-
-    binding.btnChallenges.setOnClickListener {
-      animateButton(it)
-      pauseAudioIfNeeded()
-      findNavController().navigate(R.id.action_homeFragment_to_challengesFragment)
-    }
+  private fun navigateSafely(action: Int) {
+    backgroundPlayer?.pause()
+    findNavController().navigate(action)
   }
 
-  private fun setupBottleButton() {
-    binding.btnPresioname.setOnClickListener { spinBottle() }
-  }
-
-  private fun animateButton(view: View) {
+  private fun animateButton(view: View, onEnd: () -> Unit) {
+    view.animate().cancel()
     view
         .animate()
-        .scaleX(0.75f)
-        .scaleY(0.75f)
-        .rotation(-2f)
-        .setDuration(120)
+        .scaleX(0.85f)
+        .scaleY(0.85f)
+        .setDuration(80)
         .withEndAction {
-          view.animate().scaleX(1f).scaleY(1f).rotation(0f).setDuration(120).start()
+          view.animate().scaleX(1f).scaleY(1f).setDuration(80).withEndAction(onEnd).start()
         }
         .start()
   }
@@ -156,31 +126,53 @@ class HomeFragment : Fragment() {
   }
 
   private fun spinBottle() {
+    startSpinState()
+    val targetRotation = nextBottleRotation()
+    startCountdown {
+      showChallengeDialog()
+    }
+    playSpinAnimation(targetRotation)
+  }
+
+  private fun showChallengeDialog() {
+    pauseAudioForChallenge()
+  }
+
+  private fun pauseAudioForChallenge() {
+    backgroundPlayer?.pause()
+    stopSpinSound()
+  }
+
+  private fun startSpinState() {
+    isSpinning = true
     binding.btnPresioname.clearAnimation()
     binding.btnPresioname.visibility = View.INVISIBLE
-
-    pauseAudioIfNeeded()
+    backgroundPlayer?.pause()
     playSpinSound()
+  }
 
-    val targetRotation = nextBottleRotation()
-    val duration = nextSpinDuration()
-
-    startCountdown(duration)
-
+  private fun playSpinAnimation(targetRotation: Float) {
     binding.bottleImage
         .animate()
         .rotation(targetRotation)
-        .setDuration(duration)
-        .withEndAction {
-          saveBottleRotation(targetRotation)
-          binding.tvCountdown.visibility = View.GONE
-          binding.btnPresioname.visibility = View.VISIBLE
-          startBlinkAnimation()
-
-          resetSpinSound()
-          resumeAudioIfNeeded()
-        }
+        .setDuration(SPIN_DURATION)
+        .withEndAction { finishSpin(targetRotation) }
         .start()
+  }
+
+  private fun finishSpin(targetRotation: Float) {
+    saveBottleRotation(targetRotation)
+
+    binding.tvCountdown.visibility = View.GONE
+    binding.btnPresioname.visibility = View.VISIBLE
+
+    startBlinkAnimation()
+
+    isSpinning = false
+
+    stopSpinSound()
+
+    if (isAudioEnabled) backgroundPlayer?.start()
   }
 
   private fun nextBottleRotation(): Float {
@@ -189,92 +181,99 @@ class HomeFragment : Fragment() {
     return bottleRotation + fullSpins + randomExtra
   }
 
-  private fun nextSpinDuration(): Long {
-    return (3..5).random() * 1000L
-  }
-
   private fun saveBottleRotation(rotation: Float) {
     bottleRotation = rotation
   }
 
-  private fun startCountdown(duration: Long) {
-    binding.tvCountdown.visibility = View.VISIBLE
+  private fun startCountdown(onComplete: () -> Unit) {
 
-    val totalSeconds = (duration / 1000).toInt()
-    var count = totalSeconds
+    binding.tvCountdown.visibility = View.VISIBLE
+    binding.tvCountdown.text = "3"
+
+    countdownTimer?.cancel()
 
     countdownTimer =
-        object : CountDownTimer(duration, 1000) {
+        object : CountDownTimer(SPIN_DURATION, 1000) {
+
+              private var value = 3
+
               override fun onTick(millisUntilFinished: Long) {
-                binding.tvCountdown.text = (millisUntilFinished / 1000).toString()
+                if (value >= 0) {
+                  binding.tvCountdown.text = value.toString()
+                  value--
+                }
               }
 
               override fun onFinish() {
                 binding.tvCountdown.text = "0"
+                onComplete()
               }
             }
             .start()
   }
 
   private fun toggleAudio() {
-    isAudioOn = !isAudioOn
+    isAudioEnabled = !isAudioEnabled
 
-    if (isAudioOn) {
-      backgroundPlayer?.start()
-      binding.btnAudio.setImageResource(R.drawable.ic_volume_on)
-    } else {
+    if (!isAudioEnabled) {
       backgroundPlayer?.pause()
-      binding.btnAudio.setImageResource(R.drawable.ic_volume_off)
+      stopSpinSound()
+    } else {
+      if (!isSpinning) backgroundPlayer?.start()
     }
+
+    binding.btnAudio.setImageResource(
+        if (isAudioEnabled) R.drawable.ic_volume_on else R.drawable.ic_volume_off
+    )
   }
 
   private fun playSpinSound() {
     spinPlayer?.release()
-    spinPlayer = MediaPlayer.create(requireContext(), R.raw.bottle_spin)
-    spinPlayer?.start()
+    spinPlayer =
+        MediaPlayer.create(requireContext(), R.raw.bottle_spin).apply {
+          seekTo(0)
+          start()
+        }
   }
 
-  private fun resetSpinSound() {
-    spinPlayer?.release()
-    spinPlayer = null
-  }
-
-  private fun pauseAudioIfNeeded() {
-    if (isAudioOn) {
-      backgroundPlayer?.pause()
-    }
-  }
-
-  private fun resumeAudioIfNeeded() {
-    if (isAudioOn) {
-      backgroundPlayer?.start()
+  private fun stopSpinSound() {
+    spinPlayer?.apply {
+      if (isPlaying) {
+        pause()
+        seekTo(0)
+      }
     }
   }
 
   private fun rateApp() {
-    val intent =
-        Intent(
-            Intent.ACTION_VIEW,
-            getString(R.string.play_store_url)
-                .toUri(),
-        )
+    backgroundPlayer?.pause()
+    val intent = Intent(Intent.ACTION_VIEW, getString(R.string.play_store_url).toUri())
     startActivity(intent)
   }
 
   private fun shareApp() {
-    val shareText = getString(R.string.share_app_message)
+    backgroundPlayer?.pause()
 
     val intent =
         Intent(Intent.ACTION_SEND).apply {
-          putExtra(Intent.EXTRA_TEXT, shareText)
           type = "text/plain"
+          putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_message))
         }
 
-    startActivity(Intent.createChooser(intent, getString(R.string.share_app_title)))
+    val chooser = Intent.createChooser(intent, getString(R.string.share_app_title))
+    startActivity(chooser)
   }
 
-  companion object {
-    private const val STATE_AUDIO_ON = "state_audio_on"
-    private const val STATE_BOTTLE_ROTATION = "state_bottle_rotation"
+  private fun cleanup() {
+    countdownTimer?.cancel()
+    countdownTimer = null
+
+    backgroundPlayer?.stop()
+    backgroundPlayer?.release()
+    backgroundPlayer = null
+
+    spinPlayer?.stop()
+    spinPlayer?.release()
+    spinPlayer = null
   }
 }

@@ -22,7 +22,7 @@ import com.example.picobotella.databinding.DialogDeleteChallengeBinding
 import com.example.picobotella.databinding.FragmentChallengesBinding
 import com.example.picobotella.model.Challenge
 import com.example.picobotella.view.adapter.ChallengeAdapter
-import com.example.picobotella.viewmodel.ChallengeViewModel
+import com.example.picobotella.viewModel.ChallengeViewModel
 
 class ChallengesFragment : Fragment() {
     private var _binding: FragmentChallengesBinding? = null

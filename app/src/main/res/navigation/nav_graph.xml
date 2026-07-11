@@ -3,7 +3,6 @@
 <navigation
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
@@ -11,13 +10,11 @@
         android:id="@+id/splashFragment"
         android:name="com.example.picobotella.view.fragments.SplashFragment">
 
-        <!-- Acción: Splash → Home (sin posibilidad de volver atrás al splash) -->
         <action
             android:id="@+id/action_splashFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true"/>
-
     </fragment>
 
     <fragment
@@ -25,28 +22,24 @@
         android:name="com.example.picobotella.view.fragments.HomeFragment"
         android:label="Home">
 
-        <!-- Acción: Home → Instrucciones (HU 5.0) -->
         <action
             android:id="@+id/action_homeFragment_to_instructionsFragment"
             app:destination="@id/instructionsFragment"/>
 
-        <!-- Acción: Home → Retos (HU 6.0) -->
         <action
             android:id="@+id/action_homeFragment_to_challengesFragment"
             app:destination="@id/challengesFragment"/>
 
     </fragment>
 
-    <!-- Placeholder: InstructionsFragment (HU 5.0) -->
     <fragment
         android:id="@+id/instructionsFragment"
         android:name="com.example.picobotella.view.fragments.InstructionsFragment"
-        android:label="Instrucciones"/>
+        android:label="Instructions"/>
 
-    <!-- Placeholder: ChallengesFragment (HU 6.0) -->
     <fragment
         android:id="@+id/challengesFragment"
         android:name="com.example.picobotella.view.fragments.ChallengesFragment"
-        android:label="Retos"/>
+        android:label="Challenges"/>
 
 </navigation>
