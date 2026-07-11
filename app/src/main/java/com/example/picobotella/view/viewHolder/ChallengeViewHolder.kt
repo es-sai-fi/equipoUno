@@ -11,33 +11,35 @@ class ChallengeViewHolder(
     private val onDelete: (Challenge) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(challenge: Challenge) {
-        binding.tvDescription.text = challenge.description
-        binding.btnEdit.setOnClickListener {
-            animateTouch(it) { onEdit(challenge) }
-        }
-        binding.btnDelete.setOnClickListener {
-            animateTouch(it) { onDelete(challenge) }
-        }
+  fun bind(challenge: Challenge) {
+    binding.tvDescription.text = challenge.description
+    binding.btnEdit.setOnClickListener {
+      animateTouch(it) { onEdit(challenge) }
     }
+    binding.btnDelete.setOnClickListener {
+      animateTouch(it) { onDelete(challenge) }
+    }
+  }
 
-    private fun animateTouch(view: View, action: () -> Unit) {
-        view.isEnabled = false
-        view.animate()
-            .scaleX(0.85f)
-            .scaleY(0.85f)
-            .setDuration(90)
-            .withEndAction {
-                view.animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(90)
-                    .withEndAction {
-                        view.isEnabled = true
-                        action()
-                    }
-                    .start()
-            }
-            .start()
-    }
+  private fun animateTouch(view: View, action: () -> Unit) {
+    view.isEnabled = false
+    view
+        .animate()
+        .scaleX(0.85f)
+        .scaleY(0.85f)
+        .setDuration(90)
+        .withEndAction {
+          view
+              .animate()
+              .scaleX(1f)
+              .scaleY(1f)
+              .setDuration(90)
+              .withEndAction {
+                view.isEnabled = true
+                action()
+              }
+              .start()
+        }
+        .start()
+  }
 }

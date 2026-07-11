@@ -25,154 +25,158 @@ import com.example.picobotella.view.adapter.ChallengeAdapter
 import com.example.picobotella.viewModel.ChallengeViewModel
 
 class ChallengesFragment : Fragment() {
-    private var _binding: FragmentChallengesBinding? = null
-    private val binding get() = _binding!!
+  private var _binding: FragmentChallengesBinding? = null
+  private val binding
+    get() = _binding!!
 
-    private val viewModel: ChallengeViewModel by viewModels()
-    private lateinit var challengeAdapter: ChallengeAdapter
-    private var activeDialog: Dialog? = null
+  private val viewModel: ChallengeViewModel by viewModels()
+  private lateinit var challengeAdapter: ChallengeAdapter
+  private var activeDialog: Dialog? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        _binding = FragmentChallengesBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+  override fun onCreateView(
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?,
+  ): View {
+    _binding = FragmentChallengesBinding.inflate(inflater, container, false)
+    return binding.root
+  }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.lifecycleOwner = viewLifecycleOwner
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    binding.lifecycleOwner = viewLifecycleOwner
 
-        setupRecyclerView()
-        observeChallenges()
-        setupActions()
-    }
+    setupRecyclerView()
+    observeChallenges()
+    setupActions()
+  }
 
-    override fun onDestroyView() {
-        activeDialog?.dismiss()
-        activeDialog = null
-        binding.recyclerview.adapter = null
-        _binding = null
-        super.onDestroyView()
-    }
+  override fun onDestroyView() {
+    activeDialog?.dismiss()
+    activeDialog = null
+    binding.recyclerview.adapter = null
+    _binding = null
+    super.onDestroyView()
+  }
 
-    private fun setupRecyclerView() {
-        challengeAdapter = ChallengeAdapter(
+  private fun setupRecyclerView() {
+    challengeAdapter =
+        ChallengeAdapter(
             onEdit = ::showEditDialog,
             onDelete = ::showDeleteDialog,
         )
-        binding.recyclerview.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = challengeAdapter
-            setHasFixedSize(false)
-        }
+    binding.recyclerview.apply {
+      layoutManager = LinearLayoutManager(requireContext())
+      adapter = challengeAdapter
+      setHasFixedSize(false)
+    }
+  }
+
+  private fun observeChallenges() {
+    viewModel.challenges.observe(viewLifecycleOwner) { challenges ->
+      challengeAdapter.submitList(challenges)
+    }
+  }
+
+  private fun setupActions() {
+    binding.btnChallengesBack.setOnClickListener {
+      findNavController().navigateUp()
+    }
+    binding.btnAddChallenge.setOnClickListener {
+      showChallengeForm()
+    }
+  }
+
+  private fun showEditDialog(challenge: Challenge) {
+    showChallengeForm(challenge)
+  }
+
+  private fun showChallengeForm(challenge: Challenge? = null) {
+    val formBinding = DialogChallengeFormBinding.inflate(layoutInflater)
+    val dialog = createDialog(formBinding.root)
+    val isEditing = challenge != null
+
+    formBinding.tvDialogTitle.setText(
+        if (isEditing) R.string.edit_challenge else R.string.add_challenge,
+    )
+    formBinding.etChallenge.setText(challenge?.description.orEmpty())
+    formBinding.etChallenge.setSelection(formBinding.etChallenge.text?.length ?: 0)
+
+    fun updateSaveButton() {
+      val hasDescription = !formBinding.etChallenge.text.isNullOrBlank()
+      formBinding.btnSave.isEnabled = hasDescription
+      val color =
+          if (hasDescription) {
+            R.color.challenge_orange
+          } else {
+            R.color.challenge_button_disabled
+          }
+      formBinding.btnSave.backgroundTintList =
+          ColorStateList.valueOf(
+              ContextCompat.getColor(requireContext(), color),
+          )
     }
 
-    private fun observeChallenges() {
-        viewModel.challenges.observe(viewLifecycleOwner) { challenges ->
-            challengeAdapter.submitList(challenges)
-        }
+    formBinding.etChallenge.doAfterTextChanged {
+      updateSaveButton()
+    }
+    formBinding.btnCancel.setOnClickListener {
+      dialog.dismiss()
+    }
+    formBinding.btnSave.setOnClickListener {
+      val description = formBinding.etChallenge.text?.toString()?.trim().orEmpty()
+      if (description.isEmpty()) return@setOnClickListener
+
+      if (challenge == null) {
+        viewModel.addChallenge(description)
+      } else {
+        viewModel.updateChallenge(challenge, description)
+      }
+      dialog.dismiss()
     }
 
-    private fun setupActions() {
-        binding.btnChallengesBack.setOnClickListener {
-            findNavController().navigateUp()
-        }
-        binding.btnAddChallenge.setOnClickListener {
-            showChallengeForm()
-        }
+    updateSaveButton()
+    showDialog(dialog)
+    formBinding.etChallenge.requestFocus()
+    dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+  }
+
+  private fun showDeleteDialog(challenge: Challenge) {
+    val deleteBinding = DialogDeleteChallengeBinding.inflate(layoutInflater)
+    val dialog = createDialog(deleteBinding.root)
+
+    deleteBinding.tvChallengeDescription.text = challenge.description
+    deleteBinding.btnNo.setOnClickListener {
+      dialog.dismiss()
+    }
+    deleteBinding.btnYes.setOnClickListener {
+      viewModel.deleteChallenge(challenge)
+      dialog.dismiss()
     }
 
-    private fun showEditDialog(challenge: Challenge) {
-        showChallengeForm(challenge)
+    showDialog(dialog)
+  }
+
+  private fun createDialog(contentView: View): Dialog {
+    activeDialog?.dismiss()
+    return Dialog(requireContext()).apply {
+      requestWindowFeature(Window.FEATURE_NO_TITLE)
+      setContentView(contentView)
+      setCancelable(false)
+      setCanceledOnTouchOutside(false)
+      setOnDismissListener {
+        if (activeDialog === this) activeDialog = null
+      }
     }
+  }
 
-    private fun showChallengeForm(challenge: Challenge? = null) {
-        val formBinding = DialogChallengeFormBinding.inflate(layoutInflater)
-        val dialog = createDialog(formBinding.root)
-        val isEditing = challenge != null
-
-        formBinding.tvDialogTitle.setText(
-            if (isEditing) R.string.edit_challenge else R.string.add_challenge,
-        )
-        formBinding.etChallenge.setText(challenge?.description.orEmpty())
-        formBinding.etChallenge.setSelection(formBinding.etChallenge.text?.length ?: 0)
-
-        fun updateSaveButton() {
-            val hasDescription = !formBinding.etChallenge.text.isNullOrBlank()
-            formBinding.btnSave.isEnabled = hasDescription
-            val color = if (hasDescription) {
-                R.color.challenge_orange
-            } else {
-                R.color.challenge_button_disabled
-            }
-            formBinding.btnSave.backgroundTintList = ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), color),
-            )
-        }
-
-        formBinding.etChallenge.doAfterTextChanged {
-            updateSaveButton()
-        }
-        formBinding.btnCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-        formBinding.btnSave.setOnClickListener {
-            val description = formBinding.etChallenge.text?.toString()?.trim().orEmpty()
-            if (description.isEmpty()) return@setOnClickListener
-
-            if (challenge == null) {
-                viewModel.addChallenge(description)
-            } else {
-                viewModel.updateChallenge(challenge, description)
-            }
-            dialog.dismiss()
-        }
-
-        updateSaveButton()
-        showDialog(dialog)
-        formBinding.etChallenge.requestFocus()
-        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+  private fun showDialog(dialog: Dialog) {
+    activeDialog = dialog
+    dialog.show()
+    dialog.window?.apply {
+      setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+      val width = (resources.displayMetrics.widthPixels * 0.9f).toInt()
+      setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
     }
-
-    private fun showDeleteDialog(challenge: Challenge) {
-        val deleteBinding = DialogDeleteChallengeBinding.inflate(layoutInflater)
-        val dialog = createDialog(deleteBinding.root)
-
-        deleteBinding.tvChallengeDescription.text = challenge.description
-        deleteBinding.btnNo.setOnClickListener {
-            dialog.dismiss()
-        }
-        deleteBinding.btnYes.setOnClickListener {
-            viewModel.deleteChallenge(challenge)
-            dialog.dismiss()
-        }
-
-        showDialog(dialog)
-    }
-
-    private fun createDialog(contentView: View): Dialog {
-        activeDialog?.dismiss()
-        return Dialog(requireContext()).apply {
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(contentView)
-            setCancelable(false)
-            setCanceledOnTouchOutside(false)
-            setOnDismissListener {
-                if (activeDialog === this) activeDialog = null
-            }
-        }
-    }
-
-    private fun showDialog(dialog: Dialog) {
-        activeDialog = dialog
-        dialog.show()
-        dialog.window?.apply {
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            val width = (resources.displayMetrics.widthPixels * 0.9f).toInt()
-            setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
-        }
-    }
+  }
 }

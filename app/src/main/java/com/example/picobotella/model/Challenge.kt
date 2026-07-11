@@ -6,8 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Challenge(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    @ColumnInfo(name = "descripcion")
-    val description: String,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo(name = "descripcion") val description: String,
 )

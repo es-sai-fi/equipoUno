@@ -13,26 +13,27 @@ class ChallengeAdapter(
     private val onDelete: (Challenge) -> Unit,
 ) : ListAdapter<Challenge, ChallengeViewHolder>(ChallengeDiffCallback) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChallengeViewHolder {
-        val binding = ItemChallengeBinding.inflate(
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChallengeViewHolder {
+    val binding =
+        ItemChallengeBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false,
         )
-        return ChallengeViewHolder(binding, onEdit, onDelete)
+    return ChallengeViewHolder(binding, onEdit, onDelete)
+  }
+
+  override fun onBindViewHolder(holder: ChallengeViewHolder, position: Int) {
+    holder.bind(getItem(position))
+  }
+
+  private object ChallengeDiffCallback : DiffUtil.ItemCallback<Challenge>() {
+    override fun areItemsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
+      return oldItem.id == newItem.id
     }
 
-    override fun onBindViewHolder(holder: ChallengeViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun areContentsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
+      return oldItem == newItem
     }
-
-    private object ChallengeDiffCallback : DiffUtil.ItemCallback<Challenge>() {
-        override fun areItemsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
-            return oldItem == newItem
-        }
-    }
+  }
 }
