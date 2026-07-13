@@ -16,6 +16,14 @@ import androidx.navigation.fragment.findNavController
 import com.example.picobotella.R
 import com.example.picobotella.databinding.FragmentHomeBinding
 import kotlin.random.Random
+import com.example.picobotella.viewModel.ChallengeViewModel
+import androidx.fragment.app.viewModels
+import com.example.picobotella.databinding.CustomDialogueBinding
+import android.app.Dialog
+import android.view.Window
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.WindowManager
 
 private const val SPIN_DURATION = 3000L
 
@@ -30,6 +38,8 @@ class HomeFragment : Fragment() {
   private var backgroundPlayer: MediaPlayer? = null
   private var spinPlayer: MediaPlayer? = null
   private var countdownTimer: CountDownTimer? = null
+
+  private val challengeViewModel: ChallengeViewModel by viewModels()
 
   override fun onCreateView(
       inflater: LayoutInflater,
@@ -135,7 +145,49 @@ class HomeFragment : Fragment() {
   }
 
   private fun showChallengeDialog() {
+
     pauseAudioForChallenge()
+
+    challengeViewModel.getRandomChallenge { challenge ->
+
+      if (challenge == null) {
+        return@getRandomChallenge
+      }
+
+      val dialogBinding = CustomDialogueBinding.inflate(layoutInflater)
+
+      val dialog = Dialog(requireContext())
+
+      dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+      dialog.setContentView(dialogBinding.root)
+
+      dialog.setCancelable(false)
+      dialog.setCanceledOnTouchOutside(false)
+
+      dialog.window?.apply {
+        setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val width = (resources.displayMetrics.widthPixels * 0.9f).toInt()
+
+        setLayout(
+          width,
+          WindowManager.LayoutParams.WRAP_CONTENT
+        )
+      }
+
+      dialogBinding.tvChallenge.text = challenge.description
+
+      dialogBinding.cancelBtn.setOnClickListener {
+
+        dialog.dismiss()
+
+        if (isAudioEnabled) {
+          backgroundPlayer?.start()
+        }
+      }
+
+      dialog.show()
+    }
   }
 
   private fun pauseAudioForChallenge() {

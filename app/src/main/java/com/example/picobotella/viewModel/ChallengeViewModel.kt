@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.picobotella.data.ChallengeDB
-import com.example.picobotella.data.ChallengeRepository
+import com.example.picobotella.repository.ChallengeRepository
 import com.example.picobotella.model.Challenge
 import kotlinx.coroutines.launch
 
@@ -38,6 +38,11 @@ class ChallengeViewModel(application: Application) : AndroidViewModel(applicatio
   fun deleteChallenge(challenge: Challenge) {
     viewModelScope.launch {
       repository.delete(challenge)
+    }
+  }
+  fun getRandomChallenge(onResult: (Challenge?) -> Unit) {
+    viewModelScope.launch {
+      onResult(repository.getRandomChallenge())
     }
   }
 }
