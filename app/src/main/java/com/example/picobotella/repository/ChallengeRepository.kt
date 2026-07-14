@@ -1,5 +1,6 @@
-package com.example.picobotella.data
+package com.example.picobotella.repository
 
+import com.example.picobotella.data.ChallengeDao
 import com.example.picobotella.model.Challenge
 import kotlinx.coroutines.flow.Flow
 
@@ -18,5 +19,9 @@ class ChallengeRepository(
 
   suspend fun delete(challenge: Challenge) {
     challengeDao.deleteChallenge(challenge)
+  }
+
+  suspend fun getRandomChallenge(): Challenge? {
+    return challengeDao.getRandomChallenge()
   }
 }
