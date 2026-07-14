@@ -24,6 +24,10 @@ import android.view.Window
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.WindowManager
+import com.bumptech.glide.Glide
+import com.example.picobotella.model.PokemonModelResponse
+import android.util.Log
+import com.example.picobotella.model.Challenge
 
 private const val SPIN_DURATION = 3000L
 
@@ -38,6 +42,10 @@ class HomeFragment : Fragment() {
   private var backgroundPlayer: MediaPlayer? = null
   private var spinPlayer: MediaPlayer? = null
   private var countdownTimer: CountDownTimer? = null
+
+  private var pokemonList = mutableListOf<PokemonModelResponse>()
+
+  private var randomChallenge: Challenge? = null
 
   private val challengeViewModel: ChallengeViewModel by viewModels()
 
@@ -58,6 +66,7 @@ class HomeFragment : Fragment() {
     setupUI()
     setupBottle()
     startBlinkAnimation()
+    observerViewModel()
   }
 
   override fun onDestroyView() {
@@ -139,55 +148,62 @@ class HomeFragment : Fragment() {
     startSpinState()
     val targetRotation = nextBottleRotation()
     startCountdown {
-      showChallengeDialog()
+      challengeViewModel.getRandomChallenge()
     }
     playSpinAnimation(targetRotation)
   }
 
-  private fun showChallengeDialog() {
+  private fun showChallengeDialog(challenge: Challenge) {
 
     pauseAudioForChallenge()
 
-    challengeViewModel.getRandomChallenge { challenge ->
+    val dialogBinding = CustomDialogueBinding.inflate(layoutInflater)
 
-      if (challenge == null) {
-        return@getRandomChallenge
-      }
+    val dialog = Dialog(requireContext())
 
-      val dialogBinding = CustomDialogueBinding.inflate(layoutInflater)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    dialog.setContentView(dialogBinding.root)
 
-      val dialog = Dialog(requireContext())
+    dialog.setCancelable(false)
+    dialog.setCanceledOnTouchOutside(false)
 
-      dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-      dialog.setContentView(dialogBinding.root)
+    dialog.window?.apply {
+      setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-      dialog.setCancelable(false)
-      dialog.setCanceledOnTouchOutside(false)
+      val width = (resources.displayMetrics.widthPixels * 0.9f).toInt()
 
-      dialog.window?.apply {
-        setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val width = (resources.displayMetrics.widthPixels * 0.9f).toInt()
-
-        setLayout(
-          width,
-          WindowManager.LayoutParams.WRAP_CONTENT
-        )
-      }
-
-      dialogBinding.tvChallenge.text = challenge.description
-
-      dialogBinding.cancelBtn.setOnClickListener {
-
-        dialog.dismiss()
-
-        if (isAudioEnabled) {
-          backgroundPlayer?.start()
-        }
-      }
-
-      dialog.show()
+      setLayout(
+        width,
+        WindowManager.LayoutParams.WRAP_CONTENT
+      )
     }
+
+    dialogBinding.tvChallenge.text = challenge.description
+
+    val randomPokemon = pokemonList.randomOrNull()
+
+    Log.d("Pokemon", randomPokemon?.img ?: "sin imagen")
+
+    randomPokemon?.let {
+
+      val imageUrl =
+        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${it.id}.png"
+
+      Glide.with(requireContext())
+        .load(imageUrl)
+        .into(dialogBinding.ivImagenApi)
+    }
+
+    dialogBinding.cancelBtn.setOnClickListener {
+
+      dialog.dismiss()
+
+      if (isAudioEnabled) {
+        backgroundPlayer?.start()
+      }
+    }
+
+    dialog.show()
   }
 
   private fun pauseAudioForChallenge() {
@@ -327,5 +343,29 @@ class HomeFragment : Fragment() {
     spinPlayer?.stop()
     spinPlayer?.release()
     spinPlayer = null
+  }
+  private fun observerViewModel() {
+    observerPokemonList()
+    observerRandomChallenge()
+  }
+
+  private fun observerRandomChallenge() {
+
+    challengeViewModel.randomChallenge.observe(viewLifecycleOwner) { challenge ->
+
+      challenge?.let {
+        showChallengeDialog(it)
+      }
+
+    }
+  }
+
+  private fun observerPokemonList() {
+
+    challengeViewModel.getPokemons()
+
+    challengeViewModel.pokemonList.observe(viewLifecycleOwner) { lista ->
+      pokemonList = lista
+    }
   }
 }
