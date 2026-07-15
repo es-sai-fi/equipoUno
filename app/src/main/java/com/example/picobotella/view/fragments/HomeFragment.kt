@@ -194,7 +194,6 @@ class HomeFragment : Fragment() {
     }
 
     dialogBinding.cancelBtn.setOnClickListener {
-
       dialog.dismiss()
 
       if (isAudioEnabled) {
@@ -236,10 +235,6 @@ class HomeFragment : Fragment() {
     isSpinning = false
 
     stopSpinSound()
-
-    if (isAudioEnabled) {
-      backgroundPlayer?.start()
-    }
 
     startCountdown {
       challengeViewModel.getRandomChallenge()
