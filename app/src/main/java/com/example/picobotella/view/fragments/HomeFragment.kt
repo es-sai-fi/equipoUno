@@ -146,10 +146,9 @@ class HomeFragment : Fragment() {
 
   private fun spinBottle() {
     startSpinState()
+
     val targetRotation = nextBottleRotation()
-    startCountdown {
-      challengeViewModel.getRandomChallenge()
-    }
+
     playSpinAnimation(targetRotation)
   }
 
@@ -231,16 +230,20 @@ class HomeFragment : Fragment() {
   private fun finishSpin(targetRotation: Float) {
     saveBottleRotation(targetRotation)
 
-    binding.tvCountdown.visibility = View.GONE
     binding.btnPresioname.visibility = View.VISIBLE
-
     startBlinkAnimation()
 
     isSpinning = false
 
     stopSpinSound()
 
-    if (isAudioEnabled) backgroundPlayer?.start()
+    if (isAudioEnabled) {
+      backgroundPlayer?.start()
+    }
+
+    startCountdown {
+      challengeViewModel.getRandomChallenge()
+    }
   }
 
   private fun nextBottleRotation(): Float {
@@ -256,28 +259,25 @@ class HomeFragment : Fragment() {
   private fun startCountdown(onComplete: () -> Unit) {
 
     binding.tvCountdown.visibility = View.VISIBLE
-    binding.tvCountdown.text = "3"
 
     countdownTimer?.cancel()
 
     countdownTimer =
-        object : CountDownTimer(SPIN_DURATION, 1000) {
+      object : CountDownTimer(4000L, 1000L) {
 
-              private var value = 3
+        override fun onTick(millisUntilFinished: Long) {
+          val seconds = millisUntilFinished / 1000
+          binding.tvCountdown.text = seconds.toString()
+        }
 
-              override fun onTick(millisUntilFinished: Long) {
-                if (value >= 0) {
-                  binding.tvCountdown.text = value.toString()
-                  value--
-                }
-              }
+        override fun onFinish() {
+          binding.tvCountdown.text = "0"
 
-              override fun onFinish() {
-                binding.tvCountdown.text = "0"
-                onComplete()
-              }
-            }
-            .start()
+          binding.tvCountdown.visibility = View.GONE
+
+          onComplete()
+        }
+      }.start()
   }
 
   private fun toggleAudio() {
