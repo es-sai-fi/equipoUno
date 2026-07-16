@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.picobotella.databinding.FragmentInstructionsBinding
+import com.bumptech.glide.Glide
+import com.example.picobotella.R
 
 class InstructionsFragment : Fragment() {
   private lateinit var binding: FragmentInstructionsBinding
@@ -23,7 +25,13 @@ class InstructionsFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+
     goBackHome()
+
+    Glide.with(this)
+      .asGif()
+      .load(R.drawable.winner_pico_botella)
+      .into(binding.winnerIcon)
   }
 
   private fun goBackHome() {
