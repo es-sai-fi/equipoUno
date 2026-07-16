@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -33,22 +32,33 @@
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/cl_contenedor"
+                app:layout_constraintBottom_toBottomOf="@id/cl_contenedor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/cl_contenedor" />
+                app:layout_constraintTop_toTopOf="@id/cl_contenedor" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
+        <!-- Círculo negro con borde blanco -->
+        <FrameLayout
+            android:id="@+id/flPokemon"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:padding="2dp"
-            android:id="@+id/ivImagenApi"
-            app:layout_constraintBottom_toTopOf="@+id/cl_contenedor"
-            app:layout_constraintEnd_toEndOf="@+id/cl_contenedor"
-            app:layout_constraintStart_toStartOf="@+id/cl_contenedor"
-            app:layout_constraintTop_toTopOf="@+id/cl_contenedor"/>
+            android:background="@drawable/bg_pokemon_circle"
+            android:elevation="8dp"
+            android:padding="4dp"
+            app:layout_constraintBottom_toTopOf="@id/cl_contenedor"
+            app:layout_constraintEnd_toEndOf="@id/cl_contenedor"
+            app:layout_constraintStart_toStartOf="@id/cl_contenedor"
+            app:layout_constraintTop_toTopOf="@id/cl_contenedor">
+
+            <ImageView
+                android:id="@+id/ivImagenApi"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter" />
+
+        </FrameLayout>
 
         <Button
             android:id="@+id/cancelBtn"
@@ -64,6 +74,6 @@
             app:layout_constraintStart_toStartOf="@id/cl_contenedor"
             app:layout_constraintTop_toBottomOf="@id/cl_contenedor" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>
