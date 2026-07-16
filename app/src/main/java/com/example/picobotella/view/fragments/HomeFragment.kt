@@ -41,6 +41,7 @@ class HomeFragment : Fragment() {
 
   private var backgroundPlayer: MediaPlayer? = null
   private var spinPlayer: MediaPlayer? = null
+  private var shouldResumeMusic = false
   private var countdownTimer: CountDownTimer? = null
 
   private var pokemonList = mutableListOf<PokemonModelResponse>()
@@ -312,21 +313,42 @@ class HomeFragment : Fragment() {
 
   private fun rateApp() {
     backgroundPlayer?.pause()
-    val intent = Intent(Intent.ACTION_VIEW, getString(R.string.play_store_url).toUri())
+    shouldResumeMusic = true
+
+    val intent =
+      Intent(
+        Intent.ACTION_VIEW,
+        getString(R.string.play_store_url).toUri()
+      )
+
     startActivity(intent)
   }
 
   private fun shareApp() {
     backgroundPlayer?.pause()
+    shouldResumeMusic = true
 
     val intent =
-        Intent(Intent.ACTION_SEND).apply {
-          type = "text/plain"
-          putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_message))
-        }
+      Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_message))
+      }
 
-    val chooser = Intent.createChooser(intent, getString(R.string.share_app_title))
-    startActivity(chooser)
+    startActivity(
+      Intent.createChooser(
+        intent,
+        getString(R.string.share_app_title)
+      )
+    )
+  }
+
+  override fun onResume() {
+    super.onResume()
+
+    if (shouldResumeMusic && isAudioEnabled && !isSpinning) {
+      backgroundPlayer?.start()
+      shouldResumeMusic = false
+    }
   }
 
   private fun cleanup() {
