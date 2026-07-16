@@ -46,7 +46,6 @@ class HomeFragment : Fragment() {
 
   private var pokemonList = mutableListOf<PokemonModelResponse>()
 
-  private var randomChallenge: Challenge? = null
 
   private val challengeViewModel: ChallengeViewModel by viewModels()
 
@@ -177,8 +176,6 @@ class HomeFragment : Fragment() {
 
       dialogBinding.tvChallenge.text = "No se han añadido retos"
 
-      // Opcional: ocultar el Pokémon cuando no hay retos
-     // dialogBinding.ivImagenApi.visibility = View.GONE
 
     } else {
 
@@ -363,6 +360,13 @@ class HomeFragment : Fragment() {
     spinPlayer?.release()
     spinPlayer = null
   }
+
+  private fun observerViewModel() {
+    observerPokemonList()
+    observerRandomChallenge()
+    observerNoChallenges()
+  }
+
   private fun observerNoChallenges() {
 
     challengeViewModel.showNoChallenges.observe(viewLifecycleOwner) { show ->
@@ -374,12 +378,6 @@ class HomeFragment : Fragment() {
 
     }
   }
-  private fun observerViewModel() {
-    observerPokemonList()
-    observerRandomChallenge()
-    observerNoChallenges()
-  }
-
   private fun observerRandomChallenge() {
 
     challengeViewModel.randomChallenge.observe(viewLifecycleOwner) { challenge ->
