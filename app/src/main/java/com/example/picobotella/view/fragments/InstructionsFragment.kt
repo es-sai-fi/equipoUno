@@ -27,11 +27,6 @@ class InstructionsFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
 
     goBackHome()
-
-    Glide.with(this)
-      .asGif()
-      .load(R.drawable.winner_pico_botella)
-      .into(binding.winnerIcon)
   }
 
   private fun goBackHome() {
