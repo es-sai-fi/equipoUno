@@ -31,8 +31,11 @@ class ChallengeViewModel(application: Application) : AndroidViewModel(applicatio
   val progressState: LiveData<Boolean> get() = _progressState
 
   private val _randomChallenge = MutableLiveData<Challenge?>()
-  val randomChallenge: LiveData<Challenge?> get() = _randomChallenge
+  val randomChallenge: LiveData<Challenge?> = _randomChallenge
 
+  fun clearRandomChallenge() {
+    _randomChallenge.value = null
+  }
   fun getPokemons() {
     viewModelScope.launch {
       _progressState.value = true
@@ -69,18 +72,29 @@ class ChallengeViewModel(application: Application) : AndroidViewModel(applicatio
       repository.delete(challenge)
     }
   }
+  private val _showNoChallenges = MutableLiveData(false)
+  val showNoChallenges: LiveData<Boolean> = _showNoChallenges
+
+  fun clearNoChallenges() {
+    _showNoChallenges.value = false
+  }
   fun getRandomChallenge() {
     viewModelScope.launch {
 
       _progressState.value = true
 
       try {
-        _randomChallenge.value = repository.getRandomChallenge()
-      } catch (e: Exception) {
-        _randomChallenge.value = null
-      }
+        val challenge = repository.getRandomChallenge()
 
-      _progressState.value = false
+        if (challenge == null) {
+          _showNoChallenges.value = true
+        } else {
+          _randomChallenge.value = challenge
+        }
+
+      } finally {
+        _progressState.value = false
+      }
     }
   }
 }
