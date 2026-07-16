@@ -152,12 +152,11 @@ class HomeFragment : Fragment() {
     playSpinAnimation(targetRotation)
   }
 
-  private fun showChallengeDialog(challenge: Challenge) {
+  private fun showChallengeDialog(challenge: Challenge?) {
 
     pauseAudioForChallenge()
 
     val dialogBinding = CustomDialogueBinding.inflate(layoutInflater)
-
     val dialog = Dialog(requireContext())
 
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -170,27 +169,30 @@ class HomeFragment : Fragment() {
       setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
       val width = (resources.displayMetrics.widthPixels * 0.9f).toInt()
-
-      setLayout(
-        width,
-        WindowManager.LayoutParams.WRAP_CONTENT
-      )
+      setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
     }
 
-    dialogBinding.tvChallenge.text = challenge.description
+    if (challenge == null) {
 
-    val randomPokemon = pokemonList.randomOrNull()
+      dialogBinding.tvChallenge.text = "No se han añadido retos"
 
-    Log.d("Pokemon", randomPokemon?.img ?: "sin imagen")
+      // Opcional: ocultar el Pokémon cuando no hay retos
+     // dialogBinding.ivImagenApi.visibility = View.GONE
 
-    randomPokemon?.let {
+    } else {
 
-      val imageUrl =
-        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${it.id}.png"
+      dialogBinding.tvChallenge.text = challenge.description
 
-      Glide.with(requireContext())
-        .load(imageUrl)
-        .into(dialogBinding.ivImagenApi)
+      val randomPokemon = pokemonList.randomOrNull()
+
+      randomPokemon?.let {
+        val imageUrl =
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${it.id}.png"
+
+        Glide.with(requireContext())
+          .load(imageUrl)
+          .into(dialogBinding.ivImagenApi)
+      }
     }
 
     dialogBinding.cancelBtn.setOnClickListener {
@@ -339,17 +341,29 @@ class HomeFragment : Fragment() {
     spinPlayer?.release()
     spinPlayer = null
   }
+  private fun observerNoChallenges() {
+
+    challengeViewModel.showNoChallenges.observe(viewLifecycleOwner) { show ->
+
+      if (show) {
+        showChallengeDialog(null)
+        challengeViewModel.clearNoChallenges()
+      }
+
+    }
+  }
   private fun observerViewModel() {
     observerPokemonList()
     observerRandomChallenge()
+    observerNoChallenges()
   }
 
   private fun observerRandomChallenge() {
 
     challengeViewModel.randomChallenge.observe(viewLifecycleOwner) { challenge ->
 
-      challenge?.let {
-        showChallengeDialog(it)
+      if (challenge != null) {
+        showChallengeDialog(challenge)
         challengeViewModel.clearRandomChallenge()
       }
 
