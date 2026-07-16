@@ -350,6 +350,7 @@ class HomeFragment : Fragment() {
 
       challenge?.let {
         showChallengeDialog(it)
+        challengeViewModel.clearRandomChallenge()
       }
 
     }

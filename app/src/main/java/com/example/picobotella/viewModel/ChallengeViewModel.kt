@@ -31,8 +31,11 @@ class ChallengeViewModel(application: Application) : AndroidViewModel(applicatio
   val progressState: LiveData<Boolean> get() = _progressState
 
   private val _randomChallenge = MutableLiveData<Challenge?>()
-  val randomChallenge: LiveData<Challenge?> get() = _randomChallenge
+  val randomChallenge: LiveData<Challenge?> = _randomChallenge
 
+  fun clearRandomChallenge() {
+    _randomChallenge.value = null
+  }
   fun getPokemons() {
     viewModelScope.launch {
       _progressState.value = true
